@@ -1,16 +1,16 @@
-# Etapa de construcción - VERSIÓN CORREGIDA
+# Etapa de construcción - VERSIÓN PARA REPOSITORIO
 FROM node:22-alpine AS build
 
 WORKDIR /app
 
-# Copiar archivos de dependencias
-COPY package*.json ./
+# Copiar archivos de dependencias desde el subdirectorio
+COPY task-manager-angular/package*.json ./
 
 # Instalar dependencias
 RUN npm ci
 
-# Copiar código fuente
-COPY . .
+# Copiar código fuente desde el subdirectorio
+COPY task-manager-angular/ .
 
 # Construir la aplicación
 RUN npm run build -- --configuration=production
@@ -18,8 +18,8 @@ RUN npm run build -- --configuration=production
 # Etapa de producción
 FROM nginx:alpine AS production
 
-# Copiar configuración de nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+# Copiar configuración de nginx desde el subdirectorio
+COPY task-manager-angular/nginx.conf /etc/nginx/nginx.conf
 
 # Limpiar el directorio por defecto de nginx
 RUN rm -rf /usr/share/nginx/html/*
