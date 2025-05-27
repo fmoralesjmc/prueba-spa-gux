@@ -15,20 +15,13 @@ COPY task-manager-angular/ .
 # Construir la aplicación
 RUN npm run build -- --configuration=production
 
-# Etapa de producción
-FROM nginx:alpine AS production
+# Etapa de producción - Usar imagen compatible con OpenShift
+FROM registry.access.redhat.com/ubi8/httpd-24 AS production
 
-# Copiar configuración de nginx desde el subdirectorio
-COPY task-manager-angular/nginx.conf /etc/nginx/nginx.conf
+# Copiar SOLO los archivos del subdirectorio browser
+COPY --from=build /app/dist/task-manager-angular/browser/ /var/www/html/
 
-# Limpiar el directorio por defecto de nginx
-RUN rm -rf /usr/share/nginx/html/*
+# Exponer puerto 8080 (puerto por defecto de httpd en OpenShift)
+EXPOSE 8080
 
-# Copiar SOLO los archivos del subdirectorio browser (CORREGIDO)
-COPY --from=build /app/dist/task-manager-angular/browser/ /usr/share/nginx/html/
-
-# Exponer puerto 80
-EXPOSE 80
-
-# Comando por defecto
-CMD ["nginx", "-g", "daemon off;"] 
+# El comando por defecto ya está configurado en la imagen base 
