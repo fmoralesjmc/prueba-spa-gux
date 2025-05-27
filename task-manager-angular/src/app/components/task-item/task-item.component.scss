@@ -1,0 +1,152 @@
+.task-card {
+  margin: 16px 0;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  &.overdue {
+    border-left-color: #f44336;
+    background-color: #ffebee;
+  }
+}
+
+.task-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+}
+
+.task-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.task-subtitle {
+  font-size: 12px;
+  color: #666;
+}
+
+.task-menu-button {
+  margin-left: auto;
+}
+
+.task-description {
+  margin: 16px 0;
+  line-height: 1.5;
+  color: #555;
+}
+
+.task-chips {
+  margin: 16px 0;
+  
+  mat-chip-set {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  mat-chip {
+    font-size: 12px;
+    
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.task-dates {
+  margin: 16px 0;
+}
+
+.due-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
+  
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+  
+  &.overdue-text {
+    color: #f44336;
+    font-weight: 500;
+  }
+}
+
+.days-info {
+  color: #ff9800;
+  font-weight: 500;
+}
+
+.overdue-info {
+  color: #f44336;
+  font-weight: 500;
+}
+
+.task-actions {
+  padding: 8px 16px 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.status-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  
+  button {
+    font-size: 12px;
+    min-width: auto;
+    padding: 4px 8px;
+    
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      margin-right: 4px;
+    }
+  }
+}
+
+.delete-option {
+  color: #f44336;
+  
+  mat-icon {
+    color: #f44336;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .task-card {
+    margin: 8px 0;
+  }
+  
+  .status-buttons {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+  
+  .task-chips mat-chip-set {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

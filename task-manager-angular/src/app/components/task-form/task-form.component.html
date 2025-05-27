@@ -1,0 +1,86 @@
+<mat-card class="task-form-card">
+  <mat-card-header>
+    <mat-card-title>
+      {{ isEditMode ? 'Editar Tarea' : 'Nueva Tarea' }}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="task-form">
+      
+      <!-- Título -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Título</mat-label>
+        <input matInput formControlName="title" placeholder="Ingresa el título de la tarea">
+        <mat-error *ngIf="taskForm.get('title')?.invalid && taskForm.get('title')?.touched">
+          {{ getErrorMessage('Título') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Descripción -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput 
+                  formControlName="description" 
+                  placeholder="Describe la tarea en detalle"
+                  rows="4">
+        </textarea>
+        <mat-error *ngIf="taskForm.get('description')?.invalid && taskForm.get('description')?.touched">
+          {{ getErrorMessage('Descripción') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Prioridad -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Prioridad</mat-label>
+        <mat-select formControlName="priority">
+          <mat-option *ngFor="let priority of priorities" [value]="priority.value">
+            {{ priority.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="taskForm.get('priority')?.invalid && taskForm.get('priority')?.touched">
+          La prioridad es requerida
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Fecha límite -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Fecha límite</mat-label>
+        <input matInput 
+               [matDatepicker]="picker" 
+               formControlName="dueDate"
+               placeholder="Selecciona la fecha límite">
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="taskForm.get('dueDate')?.invalid && taskForm.get('dueDate')?.touched">
+          La fecha límite es requerida
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Estado (solo en modo edición) -->
+      <mat-form-field appearance="outline" class="full-width" *ngIf="isEditMode">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="status">
+          <mat-option *ngFor="let status of statuses" [value]="status.value">
+            {{ status.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </form>
+  </mat-card-content>
+
+  <mat-card-actions align="end" class="form-actions">
+    <button mat-button type="button" (click)="onCancel()" class="cancel-button">
+      Cancelar
+    </button>
+    <button mat-raised-button 
+            color="primary" 
+            type="submit" 
+            (click)="onSubmit()"
+            [disabled]="taskForm.invalid"
+            class="submit-button">
+      {{ isEditMode ? 'Actualizar' : 'Crear' }} Tarea
+    </button>
+  </mat-card-actions>
+</mat-card>

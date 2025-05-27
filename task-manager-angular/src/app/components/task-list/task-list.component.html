@@ -1,0 +1,161 @@
+<div class="task-list-container">
+  <!-- Header con título y botón de nueva tarea -->
+  <mat-toolbar color="primary" class="app-toolbar">
+    <span class="app-title">
+      <mat-icon>task_alt</mat-icon>
+      Gestor de Tareas
+    </span>
+    <span class="spacer"></span>
+    <button mat-raised-button color="accent" (click)="onNewTask()" class="new-task-button">
+      <mat-icon>add</mat-icon>
+      Nueva Tarea
+    </button>
+  </mat-toolbar>
+
+  <!-- Estadísticas rápidas -->
+  <div class="stats-container">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <mat-icon color="warn">pending</mat-icon>
+          <div class="stat-info">
+            <span class="stat-number">{{ pendingCount }}</span>
+            <span class="stat-label">Pendientes</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <mat-icon color="accent">schedule</mat-icon>
+          <div class="stat-info">
+            <span class="stat-number">{{ inProgressCount }}</span>
+            <span class="stat-label">En Progreso</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <mat-icon color="primary">check_circle</mat-icon>
+          <div class="stat-info">
+            <span class="stat-number">{{ completedCount }}</span>
+            <span class="stat-label">Completadas</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Formulario de nueva/editar tarea -->
+  <div class="form-container" *ngIf="showForm">
+    <app-task-form
+      [task]="editingTask"
+      [isEditMode]="isEditMode"
+      (taskSubmit)="onTaskSubmit($event)"
+      (cancel)="onCancelForm()">
+    </app-task-form>
+  </div>
+
+  <!-- Filtros y búsqueda -->
+  <mat-card class="filters-card" *ngIf="!showForm">
+    <mat-card-header>
+      <mat-card-title>Filtros y Búsqueda</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="filters-container">
+        <!-- Búsqueda -->
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar tareas</mat-label>
+          <input matInput 
+                 [(ngModel)]="searchTerm" 
+                 (ngModelChange)="onFiltersChange()"
+                 placeholder="Buscar por título o descripción">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <!-- Filtro por estado -->
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select [(ngModel)]="selectedStatus" (ngModelChange)="onFiltersChange()">
+            <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+              {{ status.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Filtro por prioridad -->
+        <mat-form-field appearance="outline">
+          <mat-label>Prioridad</mat-label>
+          <mat-select [(ngModel)]="selectedPriority" (ngModelChange)="onFiltersChange()">
+            <mat-option *ngFor="let priority of priorityOptions" [value]="priority.value">
+              {{ priority.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Ordenar por -->
+        <mat-form-field appearance="outline">
+          <mat-label>Ordenar por</mat-label>
+          <mat-select [(ngModel)]="sortBy" (ngModelChange)="onFiltersChange()">
+            <mat-option *ngFor="let sort of sortOptions" [value]="sort.value">
+              {{ sort.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Botón de orden -->
+        <button mat-icon-button 
+                (click)="toggleSortOrder()" 
+                [matTooltip]="sortOrder === 'asc' ? 'Orden ascendente' : 'Orden descendente'"
+                class="sort-button">
+          <mat-icon>{{ sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+        </button>
+
+        <!-- Limpiar filtros -->
+        <button mat-button (click)="clearFilters()" class="clear-filters-button">
+          <mat-icon>clear</mat-icon>
+          Limpiar
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Lista de tareas -->
+  <div class="tasks-container" *ngIf="!showForm">
+    <div class="tasks-list">
+      <ng-container *ngIf="filteredTasks$ | async as tasks">
+        <div *ngIf="tasks.length === 0" class="no-tasks">
+          <mat-card class="no-tasks-card">
+            <mat-card-content>
+              <div class="no-tasks-content">
+                <mat-icon class="no-tasks-icon">task_alt</mat-icon>
+                <h3>No hay tareas</h3>
+                <p>{{ searchTerm || selectedStatus !== 'todas' || selectedPriority !== 'todas' 
+                    ? 'No se encontraron tareas con los filtros aplicados' 
+                    : 'Comienza creando tu primera tarea' }}</p>
+                <button mat-raised-button color="primary" (click)="onNewTask()" *ngIf="!searchTerm && selectedStatus === 'todas' && selectedPriority === 'todas'">
+                  <mat-icon>add</mat-icon>
+                  Crear Primera Tarea
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div *ngFor="let task of tasks; trackBy: trackByTaskId" class="task-item-wrapper">
+          <app-task-item
+            [task]="task"
+            (editTask)="onEditTask($event)"
+            (deleteTask)="onDeleteTask($event)"
+            (updateStatus)="onUpdateStatus($event)">
+          </app-task-item>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

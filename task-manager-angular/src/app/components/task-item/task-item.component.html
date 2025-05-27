@@ -1,0 +1,89 @@
+<mat-card class="task-card" [class.overdue]="isOverdue()">
+  <mat-card-header>
+    <div mat-card-avatar class="task-avatar">
+      <mat-icon [color]="getStatusColor()">{{ getStatusIcon() }}</mat-icon>
+    </div>
+    <mat-card-title class="task-title">{{ task.title }}</mat-card-title>
+    <mat-card-subtitle class="task-subtitle">
+      <span class="created-date">Creada: {{ formatDate(task.createdAt) }}</span>
+    </mat-card-subtitle>
+    
+    <!-- Menú de acciones -->
+    <button mat-icon-button [matMenuTriggerFor]="menu" class="task-menu-button">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="onEdit()">
+        <mat-icon>edit</mat-icon>
+        <span>Editar</span>
+      </button>
+      <button mat-menu-item (click)="onDelete()" class="delete-option">
+        <mat-icon>delete</mat-icon>
+        <span>Eliminar</span>
+      </button>
+    </mat-menu>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p class="task-description">{{ task.description }}</p>
+    
+    <!-- Chips de información -->
+    <div class="task-chips">
+      <mat-chip-set>
+        <mat-chip [color]="getPriorityColor()" selected>
+          <mat-icon matChipAvatar>priority_high</mat-icon>
+          {{ task.priority | titlecase }}
+        </mat-chip>
+        
+        <mat-chip [color]="getStatusColor()" selected>
+          <mat-icon matChipAvatar>{{ getStatusIcon() }}</mat-icon>
+          {{ task.status | titlecase }}
+        </mat-chip>
+      </mat-chip-set>
+    </div>
+
+    <!-- Información de fecha -->
+    <div class="task-dates">
+      <div class="due-date" [class.overdue-text]="isOverdue()">
+        <mat-icon>event</mat-icon>
+        <span>Vence: {{ formatDate(task.dueDate) }}</span>
+        <span class="days-info" *ngIf="!isOverdue() && getDaysUntilDue() <= 7">
+          ({{ getDaysUntilDue() }} días)
+        </span>
+        <span class="overdue-info" *ngIf="isOverdue()">
+          ({{ Math.abs(getDaysUntilDue()) }} días vencida)
+        </span>
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions align="end" class="task-actions">
+    <!-- Botones de cambio de estado -->
+    <div class="status-buttons">
+      <button mat-button 
+              *ngIf="task.status !== 'pendiente'"
+              (click)="onStatusChange('pendiente')"
+              matTooltip="Marcar como pendiente">
+        <mat-icon>pending</mat-icon>
+        Pendiente
+      </button>
+      
+      <button mat-button 
+              *ngIf="task.status !== 'en progreso'"
+              (click)="onStatusChange('en progreso')"
+              matTooltip="Marcar como en progreso">
+        <mat-icon>schedule</mat-icon>
+        En Progreso
+      </button>
+      
+      <button mat-button 
+              *ngIf="task.status !== 'completada'"
+              (click)="onStatusChange('completada')"
+              matTooltip="Marcar como completada"
+              color="primary">
+        <mat-icon>check_circle</mat-icon>
+        Completar
+      </button>
+    </div>
+  </mat-card-actions>
+</mat-card>
